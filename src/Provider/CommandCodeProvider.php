@@ -7,7 +7,6 @@ namespace WordPress\CommandCodeAiProvider\Provider;
 use WordPress\AiClient\AiClient;
 use WordPress\AiClient\Common\Exception\RuntimeException;
 use WordPress\AiClient\Providers\ApiBasedImplementation\AbstractApiProvider;
-use WordPress\AiClient\Providers\ApiBasedImplementation\ListModelsApiBasedProviderAvailability;
 use WordPress\AiClient\Providers\Contracts\ModelMetadataDirectoryInterface;
 use WordPress\AiClient\Providers\Contracts\ProviderAvailabilityInterface;
 use WordPress\AiClient\Providers\DTO\ProviderMetadata;
@@ -17,6 +16,7 @@ use WordPress\AiClient\Providers\Models\Contracts\ModelInterface;
 use WordPress\AiClient\Providers\Models\DTO\ModelMetadata;
 use WordPress\CommandCodeAiProvider\Metadata\CommandCodeModelMetadataDirectory;
 use WordPress\CommandCodeAiProvider\Models\CommandCodeTextGenerationModel;
+use WordPress\CommandCodeAiProvider\Provider\CommandCodeProviderAvailability;
 
 /**
  * Class for the AI Provider for Command Code.
@@ -100,8 +100,9 @@ class CommandCodeProvider extends AbstractApiProvider
      */
     protected static function createProviderAvailability(): ProviderAvailabilityInterface
     {
-        // Check valid API access by attempting to list models.
-        return new ListModelsApiBasedProviderAvailability(
+        // Check valid API access by attempting to list models, logging
+        // failures so validation errors are diagnosable from the debug log.
+        return new CommandCodeProviderAvailability(
             static::modelMetadataDirectory()
         );
     }
