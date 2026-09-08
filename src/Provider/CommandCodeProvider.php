@@ -16,7 +16,6 @@ use WordPress\AiClient\Providers\Models\Contracts\ModelInterface;
 use WordPress\AiClient\Providers\Models\DTO\ModelMetadata;
 use WordPress\CommandCodeAiProvider\Metadata\CommandCodeModelMetadataDirectory;
 use WordPress\CommandCodeAiProvider\Models\CommandCodeTextGenerationModel;
-use WordPress\CommandCodeAiProvider\Provider\CommandCodeProviderAvailability;
 
 /**
  * Class for the AI Provider for Command Code.
