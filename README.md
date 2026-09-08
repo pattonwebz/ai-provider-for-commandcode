@@ -103,6 +103,57 @@ The filter must return a list of the same model objects (`$model->getId()`
 gives the model ID). No core or SDK filter exists for this — it is provided by
 this plugin (see `CommandCodeModelMetadataDirectory::applyModelFilters()`).
 
+#### Recipe: one text model + one vision model
+
+To run a single site on exactly one text model and one vision model — e.g.
+`deepseek/deepseek-v4-flash` for text and `MiniMaxAI/MiniMax-M3` for vision —
+drop a file like this into `wp-content/mu-plugins/`:
+
+```php
+<?php
+/**
+ * Plugin Name: Command Code Model Allowlist
+ * Description: Restricts the Command Code connector to deepseek/deepseek-v4-flash (text) and MiniMaxAI/MiniMax-M3 (vision).
+ */
+
+use WordPress\AiClient\Providers\Models\DTO\ModelMetadata;
+
+add_filter(
+    'ai_provider_for_commandcode_models',
+    static function ( array $models ): array {
+        $allowed = array(
+            'deepseek/deepseek-v4-flash',
+            'MiniMaxAI/MiniMax-M3',
+        );
+        return array_values( array_filter(
+            $models,
+            static function ( ModelMetadata $model ) use ( $allowed ): bool {
+                return in_array( $model->getId(), $allowed, true );
+            }
+        ) );
+    }
+);
+```
+
+The vision model stays available for image-description requests because
+`isVisionCapable()` still marks `MiniMaxAI/MiniMax-M3` as vision-capable — the
+allowlist only removes entries, it doesn't change their metadata. Text-only
+requests will never select it since input-modality matching still applies;
+it's simply the only vision-capable model left in the catalog.
+
+> **Cache gotcha:** the model list is cached for 24 hours in the `wp_ai_client`
+> object cache group (`WP_AI_Client_Cache`, backed by whatever persistent
+> object cache the site uses — e.g. Redis). Adding, removing, or editing this
+> filter has no visible effect until that cache entry expires or is cleared.
+> Flush it immediately after deploying a filter change:
+>
+> ```php
+> wp_cache_flush_group( 'wp_ai_client' );
+> ```
+>
+> (or `wp cache flush` if the site's object cache backend doesn't support
+> group-only flushing).
+
 ### Picking a model per request
 
 ```php
