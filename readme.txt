@@ -65,6 +65,7 @@ verified vision model you prefer via `using_model_preference()`.
 = 0.1.1 =
 
 * New `ai_provider_for_commandcode_models` filter: restrict the model catalog to a preferred allowlist (or remove individual models).
+* Connector logo now uses the Command Code icon mark (192px PNG).
 
 = 0.1.0 =
 
