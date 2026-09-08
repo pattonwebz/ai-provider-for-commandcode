@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace WordPress\CommandCodeAiProvider\Models;
 
 use WordPress\AiClient\Providers\Http\DTO\Request;
+use WordPress\AiClient\Providers\Http\DTO\RequestOptions;
 use WordPress\AiClient\Providers\Http\Enums\HttpMethodEnum;
 use WordPress\AiClient\Providers\OpenAiCompatibleImplementation\AbstractOpenAiCompatibleTextGenerationModel;
 use WordPress\CommandCodeAiProvider\Provider\CommandCodeProvider;
@@ -32,11 +33,18 @@ class CommandCodeTextGenerationModel extends AbstractOpenAiCompatibleTextGenerat
         array $headers = [],
         $data = null
     ): Request {
+        // Chat completions can easily exceed WordPress's default 5-second
+        // HTTP timeout, especially for vision requests. Without this, a
+        // valid, working request routinely fails as a NetworkException.
+        $options = new RequestOptions();
+        $options->setTimeout(30.0);
+
         return new Request(
             $method,
             CommandCodeProvider::url($path),
             $headers,
-            $data
+            $data,
+            $options
         );
     }
 }
