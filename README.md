@@ -148,4 +148,5 @@ classifier against the current catalog.
 ## License
 
 GPL-2.0-or-later. Not affiliated with or endorsed by Command Code. The Command
-Code logo is a trademark of its owner and is used here to identify the service.
+Code logo is used with permission to identify the service, per Command Code's
+brand guidelines; it remains the property of its owner.
