@@ -181,7 +181,11 @@ class CommandCodeModelMetadataDirectory extends AbstractOpenAiCompatibleModelMet
 
         $models = array_values(
             array_map(
-                static function (array $modelData) use ($textCapabilities, $baseOptions, $penaltyOptions): ?ModelMetadata {
+                static function (array $modelData) use (
+                    $textCapabilities,
+                    $baseOptions,
+                    $penaltyOptions
+                ): ?ModelMetadata {
                     if (!isset($modelData['id']) || !is_string($modelData['id'])) {
                         return null;
                     }
@@ -192,9 +196,10 @@ class CommandCodeModelMetadataDirectory extends AbstractOpenAiCompatibleModelMet
                     }
 
                     // The API provides a display name when available.
-                    $displayName = isset($modelData['name']) && is_string($modelData['name']) && '' !== $modelData['name']
-                        ? $modelData['name']
-                        : $modelId;
+                    $hasDisplayName = isset($modelData['name'])
+                        && is_string($modelData['name'])
+                        && '' !== $modelData['name'];
+                    $displayName = $hasDisplayName ? $modelData['name'] : $modelId;
 
                     $modelOptions = $baseOptions;
 

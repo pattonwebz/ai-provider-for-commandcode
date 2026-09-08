@@ -78,12 +78,13 @@ class CommandCodeProvider extends AbstractApiProvider
         // Provider description support was added in 1.2.0.
         if (version_compare(AiClient::VERSION, '1.2.0', '>=')) {
             // For WordPress, we should translate the description.
-            if (function_exists('__')) {
-                // phpcs:ignore Generic.Files.LineLength.TooLong
-                $providerMetadataArgs[] = __('Text generation with DeepSeek, GPT, Gemini and other models via Command Code.', 'ai-provider-for-commandcode');
-            } else {
-                $providerMetadataArgs[] = 'Text generation with DeepSeek, GPT, Gemini and other models via Command Code.';
-            }
+            $description = function_exists('__')
+                ? __(
+                    'Text generation with DeepSeek, GPT, Gemini and other models via Command Code.',
+                    'ai-provider-for-commandcode'
+                )
+                : 'Text generation with DeepSeek, GPT, Gemini and other models via Command Code.';
+            $providerMetadataArgs[] = $description;
         }
         // Provider logoPath support was added in 1.3.0.
         if (version_compare(AiClient::VERSION, '1.3.0', '>=')) {

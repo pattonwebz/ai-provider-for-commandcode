@@ -76,6 +76,6 @@ jobs:
       - name: Configure Composer platform
         run: composer config platform.php ${{ matrix.php }}
       - name: Install Composer dependencies
-        run: composer update wordpress/php-ai-client --with-all-dependencies --no-interaction --no-progress --prefer-dist ${{ matrix.composer_options }}
+        run: composer update --with-all-dependencies --no-interaction --no-progress --prefer-dist ${{ matrix.composer_options }}
       - name: Run PHPUnit
         run: composer test
