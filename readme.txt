@@ -67,6 +67,7 @@ verified vision model you prefer via `using_model_preference()`.
 * New `ai_provider_for_commandcode_models` filter: restrict the model catalog to a preferred allowlist (or remove individual models).
 * Connector logo now uses the Command Code icon mark (192px PNG).
 * Availability check failures are logged with the underlying cause (key rejected, plan restriction, network error) for easier connector debugging.
+* Model catalog/availability requests use a 15s timeout instead of WordPress's 5s default (Command Code's models endpoint responds in ~5.1s, previously causing false "invalid key" validation failures).
 
 = 0.1.0 =
 

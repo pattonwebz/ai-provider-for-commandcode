@@ -6,6 +6,7 @@ namespace WordPress\CommandCodeAiProvider\Metadata;
 
 use WordPress\AiClient\Messages\Enums\ModalityEnum;
 use WordPress\AiClient\Providers\Http\DTO\Request;
+use WordPress\AiClient\Providers\Http\DTO\RequestOptions;
 use WordPress\AiClient\Providers\Http\DTO\Response;
 use WordPress\AiClient\Providers\Http\Enums\HttpMethodEnum;
 use WordPress\AiClient\Providers\Http\Exception\ResponseException;
@@ -52,6 +53,22 @@ use WordPress\CommandCodeAiProvider\Provider\CommandCodeProvider;
  */
 class CommandCodeModelMetadataDirectory extends AbstractOpenAiCompatibleModelMetadataDirectory
 {
+    /**
+     * Timeout (in seconds) for model catalog and availability requests.
+     *
+     * Command Code's `GET /provider/v1/models` endpoint consistently responds
+     * in ~5.1 seconds — just past WordPress's 5 second default HTTP timeout —
+     * which made every availability check fail with cURL error 28 and caused
+     * connector key validation to report a false "invalid key" (core swallows
+     * the exception and reverts the saved key). Requests to this endpoint
+     * therefore override the default timeout.
+     *
+     * @since 0.1.1
+     *
+     * @var float
+     */
+    private const MODELS_REQUEST_TIMEOUT_SECONDS = 15.0;
+
     /**
      * Regular expression matching model IDs served on the Anthropic Messages
      * wire (`/provider/v1/messages`), which this provider does not implement.
@@ -135,11 +152,15 @@ class CommandCodeModelMetadataDirectory extends AbstractOpenAiCompatibleModelMet
      */
     protected function createRequest(HttpMethodEnum $method, string $path, array $headers = [], $data = null): Request
     {
+        $options = new RequestOptions();
+        $options->setTimeout(self::MODELS_REQUEST_TIMEOUT_SECONDS);
+
         return new Request(
             $method,
             CommandCodeProvider::url($path),
             $headers,
-            $data
+            $data,
+            $options
         );
     }
 
