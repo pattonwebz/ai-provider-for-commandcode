@@ -3,7 +3,7 @@ Contributors:      pattonwebz
 Tags:              ai, command-code, commandcode, connector, artificial-intelligence
 Requires at least: 7.0
 Tested up to:      7.0
-Stable tag:        0.1.0
+Stable tag:        0.1.1
 Requires PHP:      7.4
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -61,6 +61,10 @@ resolve to the default vision model (MiniMaxAI/MiniMax-M3) or to whichever
 verified vision model you prefer via `using_model_preference()`.
 
 == Changelog ==
+
+= 0.1.1 =
+
+* New `ai_provider_for_commandcode_models` filter: restrict the model catalog to a preferred allowlist (or remove individual models).
 
 = 0.1.0 =
 

@@ -232,7 +232,52 @@ class CommandCodeModelMetadataDirectory extends AbstractOpenAiCompatibleModelMet
 
         usort($models, [$this, 'modelSortCallback']);
 
-        return $models;
+        return $this->applyModelFilters($models);
+    }
+
+    /**
+     * Applies the `ai_provider_for_commandcode_models` filter to the model list.
+     *
+     * Sites can use this filter to restrict the catalog to preferred models
+     * (e.g. an allowlist of models they want to expose or pay for). The filter
+     * must return a list of {@see ModelMetadata} instances. Filtering here
+     * affects everything that reads the provider's catalog: automatic model
+     * selection, model pickers in consuming plugins, and model preferences.
+     *
+     * Usage example — allowlist:
+     *
+     *     add_filter( 'ai_provider_for_commandcode_models', static function ( array $models ): array {
+     *         $allowed = array( 'deepseek/deepseek-v4-flash', 'MiniMaxAI/MiniMax-M3' );
+     *         return array_values( array_filter(
+     *             $models,
+     *             static function ( ModelMetadata $model ) use ( $allowed ): bool {
+     *                 return in_array( $model->getId(), $allowed, true );
+     *             }
+     *         ) );
+     *     } );
+     *
+     * @since 0.1.1
+     *
+     * @param list<ModelMetadata> $models The sorted model metadata list.
+     * @return list<ModelMetadata> The filtered model metadata list.
+     */
+    protected function applyModelFilters(array $models): array
+    {
+        if (!function_exists('apply_filters')) {
+            return $models;
+        }
+
+        $filtered = apply_filters('ai_provider_for_commandcode_models', $models);
+        if (!is_array($filtered)) {
+            return $models;
+        }
+
+        return array_values(array_filter(
+            $filtered,
+            static function ($model): bool {
+                return $model instanceof ModelMetadata;
+            }
+        ));
     }
 
     /**

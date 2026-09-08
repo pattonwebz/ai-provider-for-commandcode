@@ -289,4 +289,63 @@ class CommandCodeModelMetadataDirectoryTest extends TestCase
             })
         );
     }
+
+    public function testAllowlistFilterRestrictsCatalog(): void
+    {
+        add_filter('ai_provider_for_commandcode_models', static function (array $models): array {
+            $allowed = ['deepseek/deepseek-v4-flash', 'MiniMaxAI/MiniMax-M3'];
+            return array_values(array_filter(
+                $models,
+                static function (ModelMetadata $model) use ($allowed): bool {
+                    return in_array($model->getId(), $allowed, true);
+                }
+            ));
+        });
+
+        try {
+            $models = $this->parseFixture();
+
+            $this->assertCount(2, $models);
+            $this->assertSame('deepseek/deepseek-v4-flash', $models[0]->getId());
+            $this->assertSame('MiniMaxAI/MiniMax-M3', $models[1]->getId());
+        } finally {
+            remove_all_filters('ai_provider_for_commandcode_models');
+        }
+    }
+
+    public function testRemoveSingleModelViaFilter(): void
+    {
+        add_filter('ai_provider_for_commandcode_models', static function (array $models): array {
+            return array_values(array_filter(
+                $models,
+                static function (ModelMetadata $model): bool {
+                    return 'gpt-5.3-codex' !== $model->getId();
+                }
+            ));
+        });
+
+        try {
+            $models = $this->parseFixture();
+
+            $this->assertCount(58, $models);
+            $this->assertNull($this->findModel($models, 'gpt-5.3-codex'));
+        } finally {
+            remove_all_filters('ai_provider_for_commandcode_models');
+        }
+    }
+
+    public function testNonArrayFilterReturnIsIgnored(): void
+    {
+        add_filter('ai_provider_for_commandcode_models', static function (): string {
+            return 'not a model list';
+        });
+
+        try {
+            $models = $this->parseFixture();
+
+            $this->assertCount(59, $models);
+        } finally {
+            remove_all_filters('ai_provider_for_commandcode_models');
+        }
+    }
 }

@@ -56,6 +56,53 @@ if ( is_wp_error( $text ) ) {
 }
 ```
 
+### Limiting the model catalog to your preferences
+
+By default the connector exposes every model Command Code serves on the chat
+wire (currently ~59). To restrict the catalog to the models you actually want
+to use — which also narrows automatic selection and any model picker built on
+the registry — filter `ai_provider_for_commandcode_models` (e.g. in an
+mu-plugin or theme `functions.php`):
+
+```php
+// Allowlist: only these models are ever offered or auto-selected.
+add_filter(
+    'ai_provider_for_commandcode_models',
+    static function ( array $models ): array {
+        $allowed = array(
+            'deepseek/deepseek-v4-flash',
+            'MiniMaxAI/MiniMax-M3',
+            'gpt-5.5',
+        );
+        return array_values( array_filter(
+            $models,
+            static function ( $model ) use ( $allowed ): bool {
+                return in_array( $model->getId(), $allowed, true );
+            }
+        ) );
+    }
+);
+```
+
+```php
+// Or just drop one model you never want to surface:
+add_filter(
+    'ai_provider_for_commandcode_models',
+    static function ( array $models ): array {
+        return array_values( array_filter(
+            $models,
+            static function ( $model ): bool {
+                return 'gpt-5.3-codex' !== $model->getId();
+            }
+        ) );
+    }
+);
+```
+
+The filter must return a list of the same model objects (`$model->getId()`
+gives the model ID). No core or SDK filter exists for this — it is provided by
+this plugin (see `CommandCodeModelMetadataDirectory::applyModelFilters()`).
+
 ### Picking a model per request
 
 ```php
