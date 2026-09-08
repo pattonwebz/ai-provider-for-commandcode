@@ -1,6 +1,6 @@
 # AI Provider for Command Code
 
-AI Provider for Command Code for the [WordPress AI Client](https://make.wordpress.org/core/2026/03/24/introducing-the-ai-client-in-wordpress-7-0/) (WP 7.0+). Works as both a WordPress plugin and a Composer package.
+AI Provider for Command Code for the [WordPress AI Client](https://make.wordpress.org/core/2026/03/24/introducing-the-ai-client-in-wordpress-7-0/) (WP 7.0+).
 
 Registers **Command Code** as a first-class AI provider in the WordPress 7.0 Connectors system (Settings → Connectors). No plugin code touches API keys — WordPress derives everything from the provider ID:
 
@@ -20,15 +20,7 @@ Registers **Command Code** as a first-class AI provider in the WordPress 7.0 Con
 
 ## Installation
 
-As a WordPress plugin: drop the folder into `wp-content/plugins/` and activate. The plugin registers with the AI Client at `init`, and core auto-creates the "Command Code" connector card.
-
-As a Composer package:
-
-```bash
-composer require pattonwebz/ai-provider-for-commandcode
-```
-
-(The SDK classes are loaded by WordPress core on 7.0+; nothing else to install.)
+Drop the folder into `wp-content/plugins/` and activate. The plugin registers with the AI Client at `init`, and core auto-creates the "Command Code" connector card.
 
 ## Configuration
 
