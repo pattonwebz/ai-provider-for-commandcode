@@ -1,0 +1,14 @@
+/.git
+/.github
+/.gitattributes
+/.gitignore
+/.distignore
+/.wordpress-org
+/composer.json
+/composer.lock
+/phpcs.xml.dist
+/phpunit.xml.dist
+/phpstan.neon.dist
+/README.md
+/tests
+/vendor
